@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/20 06:31:03 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/22 16:18:28 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,13 @@ namespace ft
 		{
 			Node* node = new Node();
 			//Node* node = aloc.allocate(1);
-			node->content = _al.allocate(1);
+			//node->content = _al.allocate(1);
+			node->content = new value_type();
 			// node->key = key;
 			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "&" for test
 			//node->content = content;
-			_al.construct(node->content, content);
+			node->content->first = content.first;
+			node->content->second = content.second;
 			std::cout << "content is " << node->content->first << std::endl;
 			node->left = NULL;
 			node->right = NULL;
