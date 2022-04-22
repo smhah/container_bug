@@ -81,10 +81,11 @@ namespace ft
 		{
 			Node* node = new Node();
 			//Node* node = aloc.allocate(1);
-			node->content = _al.allocate(1);
+			//node->content = _al.allocate(1);
+			node->content = new value_type();
 			// node->key = key;
 			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "&" for test
-			//node->content = content;
+			//node->content = &content;
 			_al.construct(node->content, content);
 			std::cout << "content is " << node->content->first << std::endl;
 			node->left = NULL;
