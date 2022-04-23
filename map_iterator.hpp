@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 07:47:27 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/23 11:21:11 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/23 13:32:48 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,55 @@ namespace ft
             ~map_iter(){};
             T* operator->() const{ return (_p->content);}
             T& operator*() const{ return (*_p->content);}
-
-           
+            
+            Node * minValueNode(Node* node)
+            {
+                Node* current = node;
+            
+                /* loop down to find the leftmost leaf */
+                while (current && current->left != NULL)
+                    current = current->left;
+            
+                return current;
+            }
+		
+            Node * maxValueNode(Node* node)
+            {
+                Node* current = node;
+            
+                /* loop down to find the leftmost leaf */
+                while (current && current->right != NULL)
+                    current = current->right;
+            
+                return current;
+            }
+            
+            map_iter& operator++()
+            {
+                
+                Node *n = _p;
+                Node *max = maxValueNode(_root);
+                if (_p == max)
+                {    _p = NULL;
+                    //_end = _p;
+                    return *this;
+                }
+                if (n->right != NULL)
+                {
+                    _p = minValueNode(n->right);
+                }
+                else if (n->right == NULL)
+                {   
+                    Node* p = n->parent;
+                    while (p != NULL && n == p->right)
+                    {
+                        n = p;
+                        p = p->parent;
+                    }
+                    _p = p;
+                }              
+                return (*this);
+            }       
     };
     
 } // namespace ft

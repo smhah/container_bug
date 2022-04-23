@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/23 11:21:36 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/23 13:33:18 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,7 @@ namespace ft
 			Node* current = node;
 		
 			/* loop down to find the leftmost leaf */
-			while (current->left != NULL)
+			while (current && current->left != NULL)
 				current = current->left;
 		
 			return current;
@@ -279,7 +279,7 @@ namespace ft
 			Node* current = node;
 		
 			/* loop down to find the leftmost leaf */
-			while (current->right != NULL)
+			while (current && current->right != NULL)
 				current = current->right;
 		
 			return current;

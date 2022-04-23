@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:45:00 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/23 11:07:17 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/23 13:30:58 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,9 @@ int main()
 	m.insert(planet8);
 	m.erase(planet9.first);
 	it = m.begin();
-	std::cout << "it 1 is " << it->first << std::endl;
+	std::cout << "it is " << it->first << std::endl;
+	++it;
+	std::cout << "it is " << it->first << std::endl;
 	//root = m.deleteNode(root, planet9);
 	
 	// /* Constructing tree given in
