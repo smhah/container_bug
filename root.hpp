@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/22 16:20:10 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/23 11:21:36 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ namespace ft
 		typedef ft::pair<key_type,mapped_type> value_type;
 		typedef Compare key_compare;
 		typedef Alloc allocator_type;
+		typedef size_t	size_type;
 	
 		public:
 		
@@ -36,6 +37,7 @@ namespace ft
 			_size = 0;
 			_al = alloc;
 			_kc = comp;
+			_root = NULL;
 		}
 
 		
@@ -48,13 +50,19 @@ namespace ft
 			Node *parent;
 			int height;
 		};
-
+		
+		Node * get_root(void)
+		{
+			return (_root);
+		}
+		
 		typedef typename ft::map_iter<Node, value_type,Compare> iterator;
 		typename Alloc::template rebind<Node>::other aloc;
-		Node *p;
+		Node *_root;
+		
 		iterator begin()
 		{
-			return(iterator(p));
+			return(iterator(minValueNode(_root), _root));
 		}
 		// A utility function to get the
 		// height of the tree
@@ -88,11 +96,10 @@ namespace ft
 			//node->content = content;
 			node->content->first = content.first;
 			node->content->second = content.second;
-			std::cout << "content is " << node->content->first << std::endl;
 			node->left = NULL;
 			node->right = NULL;
 			node->parent = parent;
-			node->height = 1; // new node is initially
+			node->height = 1;				 // new node is initially
 							// added at leaf
 			// std::cout << "node inserted " << node->content->first << std::endl;
 			// if(parent)
@@ -164,6 +171,15 @@ namespace ft
 			return height(N->left) - height(N->right);
 		}
 
+		void insert (const value_type& val)
+        {
+            //size_t s = _size;
+            _root = insert(_root, val, _root);
+            // if (s == _size)
+            //     return(ft::make_pair(iterator(not_inserted,_Root), false));
+            // else
+            //     return(ft::make_pair(iterator(last_insert,_Root), true));
+        }
 		// Recursive function to insert a key
 		// in the subtree rooted with node and
 		// returns the new root of the subtree.
@@ -173,10 +189,11 @@ namespace ft
 			/* 1. Perform the normal BST insertion */
 			if (node == NULL)
 			{
-				Node * n = newNode(content, parent);
-				//return(newNode(content, parent));
-				std::cout << "check " << n->content->first << std::endl;
-				return n;
+				Node * n;
+				n = newNode(content, parent);
+				node = n;
+				_size++;
+				return(node);
 			}
 			
 			// if (key < node->key)
@@ -257,6 +274,16 @@ namespace ft
 			return current;
 		}
 		
+		Node * maxValueNode(Node* node)
+		{
+			Node* current = node;
+		
+			/* loop down to find the leftmost leaf */
+			while (current->right != NULL)
+				current = current->right;
+		
+			return current;
+		}
 		// Recursive function to delete a node
 		// with given key from subtree with
 		// given root. It returns root of the
@@ -278,7 +305,7 @@ namespace ft
 			// If the content to be deleted is greater
 			// than the root's content, then it lies
 			// in right subtree
-			else if(!(_kc(content.first, root->content->first)))
+			else if((_kc(root->content->first, content.first)))
 				root->right = deleteNode(root->right, content);
 		
 			// if content is same as root's content, then
@@ -289,6 +316,7 @@ namespace ft
 				if( (root->left == NULL) ||
 					(root->right == NULL) )
 				{
+					
 					Node *temp = root->left ? root->left : root->right;
 		
 					// No child case
@@ -314,6 +342,8 @@ namespace ft
 								// the non-empty child
 					free(temp);
 					temp = NULL;
+					if(_size)
+						_size--;
 				}
 				else
 				{
@@ -389,6 +419,19 @@ namespace ft
 			}
 		};
 		
+		size_type erase (const key_type& k)
+        {
+            size_type s = _size;
+            //  printTree(_root, nullptr, false);
+			value_type content;
+			content = ft::make_pair(k, mapped_type());
+            _root = deleteNode(_root, content);
+            // printTree(_root, nullptr, false);
+            if (s == _size)
+                return 0;
+            return (1);    
+        }
+
 		// Helper function to print branches of the binary tree
 		void showTrunks(Trunk *p)
 		{

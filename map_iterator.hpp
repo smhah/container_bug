@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 07:47:27 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/20 05:20:47 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/23 11:21:11 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,18 @@ namespace ft
     {
         private:
             Node * _p;
-
+            Node *_root;
         public:
-            map_iter(){};
+            map_iter()
+            {
+                _p = NULL;
+                _root = NULL;
+            }
+            map_iter(Node *p, Node *root)
+            {
+                _p = p;
+                _root = root;
+            }
             map_iter(Node *p)
             {
                 _p = p;
@@ -36,7 +45,7 @@ namespace ft
             }
             ~map_iter(){};
             T* operator->() const{ return (_p->content);}
-            //T& operator*() const{ return (*_p->content);}
+            T& operator*() const{ return (*_p->content);}
 
            
     };
