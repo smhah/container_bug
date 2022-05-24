@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/23 13:33:18 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/26 20:34:55 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,47 @@ namespace ft
 		{
 			return(iterator(minValueNode(_root), _root));
 		}
+
+		iterator end()
+		{
+			return(iterator(NULL, _root, maxValueNode(_root)));
+		}
+
+		size_type count (const key_type& k) const
+		{
+			Node *p = _root;
+			while(p != NULL)
+			{
+				if(_kc(p->content->first, k))
+					p = p->right;
+				else if (_kc(k, p->content->first))
+					p = p->left;
+				else
+					return (1);
+			}
+			return (0);
+		}
+
+		size_type size() const
+		{
+			return _size;
+		}
+		
+		bool empty() const
+		{
+			return(_size == 0);
+		}
+
+		key_compare key_comp() const
+		{
+			return (_kc);
+		}
+
+        allocator_type get_allocator() const
+		{
+			return _al;
+		}
+		
 		// A utility function to get the
 		// height of the tree
 		// template<class Key, class T>
@@ -180,6 +221,23 @@ namespace ft
             // else
             //     return(ft::make_pair(iterator(last_insert,_Root), true));
         }
+
+		void insert (iterator position, const value_type& val)
+        {
+            (void) position;
+            insert(val);
+        }
+
+		template <class InputIterator>
+        void insert (InputIterator first, InputIterator last)
+        {
+            while (first != last)
+            {
+               insert(*first);
+                first++;
+            }
+        }
+
 		// Recursive function to insert a key
 		// in the subtree rooted with node and
 		// returns the new root of the subtree.
@@ -323,7 +381,6 @@ namespace ft
 					if (temp == NULL)
 					{
 						temp = root;
-						std::cout << "node deleted " << root->content->first << std::endl;
 						root = NULL;
 					}
 					else // One child case
@@ -337,7 +394,6 @@ namespace ft
 						else
 							root->right = NULL;
 							//deleteNode(root->right, temp->content);
-						std::cout << "1parent is " << root->parent->content->first << std::endl;
 					} // Copy the contents of
 								// the non-empty child
 					free(temp);
@@ -432,6 +488,12 @@ namespace ft
             return (1);    
         }
 
+		void erase (iterator position)
+        {
+            erase(position->first);
+        }
+
+		
 		// Helper function to print branches of the binary tree
 		void showTrunks(Trunk *p)
 		{

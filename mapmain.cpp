@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:45:00 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/23 13:30:58 by smhah            ###   ########.fr       */
+/*   Updated: 2022/04/26 20:25:54 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,17 @@ int main()
 {
 	std::map<char,int> mymap;
 	
-	mymap.insert ( std::pair<char,int>('a',100) );
-  	mymap.insert ( std::pair<char,int>('b',200) );
-	std::map<char, int>::iterator it2;
+	mymap.insert ( std::pair<char,int>('7',100) );
+  	mymap.insert ( std::pair<char,int>('3',200) );
+	mymap.insert ( std::pair<char,int>('9',200) );
+	mymap.insert ( std::pair<char,int>('5',200) );
+	mymap.insert ( std::pair<char,int>('8',200) );
+	std::map<char, int>::iterator it2 = mymap.end();
 	
-	it2 = mymap.begin();
-	std::cout << "it 2 is " << it2->first << std::endl;
+	//it2 = mymap.begin();
+	std::cout << "it2 is " << it2->first << std::endl;
+	it2--;
+	std::cout << "it2 is " << it2->first << std::endl;
 	ft::map<int, int> m;
 	ft::pair<int, int> planet1;
 	ft::pair<int, int> planet3;
@@ -44,7 +49,6 @@ int main()
 	planet9 = ft::make_pair(9, 5);
 	planet8 = ft::make_pair(8, 6);
 	//std::cout << "string is "<< planet.first << " int is " << planet.second << std::endl;
-	ft::map<int, int>::Node *root = NULL;
 	// root = m.insert(root, planet7, root);
 	// root = m.insert(root, planet3, root);
 	// root = m.insert(root, planet9, root);
@@ -55,11 +59,16 @@ int main()
 	m.insert(planet9);
 	m.insert(planet5);
 	m.insert(planet8);
-	m.erase(planet9.first);
-	it = m.begin();
+	//m.erase(planet9.first);
+	//m.erase(9);
+
+	
+	it = m.end();
+	--it;
 	std::cout << "it is " << it->first << std::endl;
-	++it;
-	std::cout << "it is " << it->first << std::endl;
+	std::cout << "is empty " << m.empty() << std::endl;
+	// ++it;
+	// std::cout << "it is " << it->first << std::endl;
 	//root = m.deleteNode(root, planet9);
 	
 	// /* Constructing tree given in
