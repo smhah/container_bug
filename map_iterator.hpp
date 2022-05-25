@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 07:47:27 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/25 20:05:51 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/25 23:13:01 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ namespace ft
 				_end = rhs._end;
 				return *this;
 			}
+
 			~map_iter(){};
 			
 			Node * minValueNode(Node* node)
@@ -168,7 +169,7 @@ namespace ft
 			{
 				return _p;
 			}
-			//operator map_iter<NODE, const T,comp>() const{return map_iter<NODE, const T,comp>(_p, _root, _end);}
+			operator map_iter<Node, const T,comp>() const{return map_iter<Node, const T,comp>(_p, _root, _end);}
             friend bool	operator==(map_iter const& lhs, map_iter const& rhs) { return (lhs._p == rhs._p); }
             friend bool	operator!=(map_iter const& lhs, map_iter const& rhs) { return (lhs._p != rhs._p); }
 	};

@@ -6,23 +6,28 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:45:00 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/25 20:19:31 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/25 23:26:46 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "root.hpp"
+# include "Map.hpp"
 # include <map>
 // Driver Code
 int main()
 {
-	std::map<char,int> mymap;
+	std::map<int,int> mymap;
 	
-	mymap.insert ( std::pair<char,int>('7',100) );
-  	mymap.insert ( std::pair<char,int>('3',200) );
-	mymap.insert ( std::pair<char,int>('9',200) );
-	mymap.insert ( std::pair<char,int>('5',200) );
-	mymap.insert ( std::pair<char,int>('8',200) );
-	std::map<char, int>::iterator it2 = mymap.end();
+	// mymap.insert ( std::pair<char,int>('6',100) );
+  	// mymap.insert ( std::pair<char,int>('3',200) );
+	// mymap.insert ( std::pair<char,int>('9',200) );
+	// mymap.insert ( std::pair<char,int>('5',200) );
+	// mymap.insert ( std::pair<char,int>('8',200) );
+	mymap[6] = 100;
+	mymap[3] = 200;
+	mymap[9] = 200;
+	mymap[5] = 200;
+	mymap[8] = 200;
+	std::map<int, int>::iterator it2 = mymap.end();
 	
 	//it2 = mymap.begin();
 	std::cout << "it2 is " << it2->first << std::endl;
@@ -63,9 +68,18 @@ int main()
 	m.insert(planet8);
 	//m.erase(planet9.first);
 	//m.erase(9);
-	ft::map<int, int>::iterator it;
+	ft::map<int, int>::const_iterator it;
 	ft::map<int, int>::iterator it1;
-	it = m.find(0);
+	// ft::map<int, int>::reverse_iterator rit;
+
+	// rit = m.rbegin();
+	// std::cout << "rbegin is " << rit->first << std::endl;
+	it = m.begin();
+	std::cout << "test const iterator " << it->first << std::endl;
+	// std::cout << "o_lower_bound " << mymap.lower_bound(10)->first << std::endl;
+	// std::cout << mymap.end()->first << std::endl;
+	// std::cout << "lower_bound " << m.lower_bound(10)->first << std::endl;
+	//it = m.find(0);
 	// /* The constructed AVL Tree would be
 	// 			30
 	// 		/ \

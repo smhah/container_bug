@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   root.hpp                                           :+:      :+:    :+:   */
+/*   Map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/25 20:23:25 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/25 23:22:24 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "ft_pair.hpp"
 #include "map_iterator.hpp"
 #include "vector.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft
 {
@@ -100,6 +101,10 @@ namespace ft
 		}
 		
 		typedef typename ft::map_iter<Node, value_type,Compare> iterator;
+		typedef typename ft::map_iter<Node, const value_type, Compare> const_iterator;
+		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef typename ft::reverse_iterator<iterator> reverse_iterator;
+
 		typename Alloc::template rebind<Node>::other aloc;
 		Node *_root;
 		
@@ -107,7 +112,10 @@ namespace ft
 		{
 			return(iterator(minValueNode(_root), _root));
 		}
-		
+		const_iterator begin() const
+		{
+			return (const_iterator(minValueNode(_root), _root));
+		}
 		//const_iterator begin() const;
 		
 		iterator end()
@@ -115,8 +123,17 @@ namespace ft
 			return(iterator(NULL, _root, maxValueNode(_root)));
 		}
 		
-		//const_iterator end() const;
+		const_iterator end() const
+		{
+			return(const_iterator(NULL, _root, maxValueNode(_root)));
+		}
 		
+		reverse_iterator rend(){return(reverse_iterator(begin()));}
+        const_reverse_iterator rend() const{return(const_reverse_iterator(begin()));}
+        
+        reverse_iterator rbegin(){return(reverse_iterator(end()));}
+        const_reverse_iterator rbegin()const {return(const_reverse_iterator(end()));}
+
 		void clear()
 		{
 			erase(begin(), end());
@@ -175,6 +192,7 @@ namespace ft
         {
             Node *current = root;
             Node *parent = root;
+
             while(current)
             {
                 if(_kc(k, current->content->first))
@@ -192,15 +210,15 @@ namespace ft
 
 		iterator lower_bound (const key_type& k)
 		{
-			return (iterator(bound(_root, k)));
+			return (iterator(bound(_root, k), _root));
 		}
 
 		//const_iterator lower_bound (const key_type& k) const;
 
 		// iterator upper_bound (const key_type& k)
         // {
-        //     Node *n = bound(_Root, k);
-        //     iterator it = iterator(n, _Root);
+        //     Node *n = bound(_root, k);
+        //     iterator it = iterator(n, _root);
         //     if(it != end() && !kc(n->content->first,k) && !kc(k, n->content->first))
         //         return(++it);
         //     return(it);
@@ -208,6 +226,12 @@ namespace ft
 	
 		//const_iterator upper_bound (const key_type& k) const;
 		
+		void swap (map& x)
+        {
+            std::swap(_size, x._size);
+            std::swap(_root, x._root);
+            std::swap(_kc, x._kc);
+        }
 		// A utility function to get the
 		// height of the tree
 		// template<class Key, class T>
@@ -341,6 +365,10 @@ namespace ft
             }
         }
 
+		// mapped_type& operator[] (const key_type& k)
+        // {
+        //     return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
+        // }
 		// Recursive function to insert a key
 		// in the subtree rooted with node and
 		// returns the new root of the subtree.
