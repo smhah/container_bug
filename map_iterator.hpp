@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 07:47:27 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/24 16:04:41 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/25 20:05:51 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ namespace ft
 
 			T* operator->() const{ return (_p->content);}
 			T& operator*() const{ return (*_p->content);}
-		
+			
 			map_iter()
 			{
 				_p = NULL;
@@ -94,10 +94,12 @@ namespace ft
 				Node *n = _p;
 				Node *max = maxValueNode(_root);
 				if (_p == max)
-				{    _p = NULL;
-					_end = _p;
+				{
+					_p = NULL;
+					_end = max;
 					return *this;
 				}
+				
 				if (n->right != NULL)
 				{
 					_p = minValueNode(n->right);
@@ -147,6 +149,28 @@ namespace ft
                 }              
                 return (*this);
             }
+
+			map_iter operator++(int)
+            {
+                map_iter tmp(*this);
+                this->operator++();
+                return (tmp);
+            }
+			
+            map_iter operator--(int)
+            {
+                map_iter tmp(*this);
+                this->operator--();
+                return (tmp);
+            }
+
+			Node * getNode()
+			{
+				return _p;
+			}
+			//operator map_iter<NODE, const T,comp>() const{return map_iter<NODE, const T,comp>(_p, _root, _end);}
+            friend bool	operator==(map_iter const& lhs, map_iter const& rhs) { return (lhs._p == rhs._p); }
+            friend bool	operator!=(map_iter const& lhs, map_iter const& rhs) { return (lhs._p != rhs._p); }
 	};
 	
 } // namespace ft

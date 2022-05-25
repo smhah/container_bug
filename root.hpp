@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/04/26 20:34:55 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/25 20:23:25 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 //#include<bits/stdc++.h>
 #include "ft_pair.hpp"
 #include "map_iterator.hpp"
+#include "vector.hpp"
 
 namespace ft
 {
@@ -39,8 +40,50 @@ namespace ft
 			_kc = comp;
 			_root = NULL;
 		}
-
 		
+		template <class InputIterator>
+  		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
+			const allocator_type& alloc = allocator_type())
+		{
+			_root = NULL;
+			_size = 0;
+			_al = alloc;
+			_kc = comp;
+			insert(first, last);
+		}
+
+		map (const map& x)
+		{
+			_size = 0;
+			_root = NULL;
+			iterator beg = x.begin();
+			iterator end = x.end();
+			while(beg != end)
+			{
+				insert(*beg);
+				beg++;
+			}
+		}
+
+		~map()
+		{
+        	clear();
+        }
+
+		map& operator= (const map& x)
+		{
+			if(_size != 0)
+				clear();
+			
+			iterator beg = x.begin();
+			iterator end = x.end();
+			while(beg != end)
+			{
+				insert(*beg);
+				beg++;
+			}
+			return(*this);
+		}
 		// An AVL tree node
 		struct Node
 		{
@@ -64,12 +107,21 @@ namespace ft
 		{
 			return(iterator(minValueNode(_root), _root));
 		}
-
+		
+		//const_iterator begin() const;
+		
 		iterator end()
 		{
 			return(iterator(NULL, _root, maxValueNode(_root)));
 		}
-
+		
+		//const_iterator end() const;
+		
+		void clear()
+		{
+			erase(begin(), end());
+		}
+		
 		size_type count (const key_type& k) const
 		{
 			Node *p = _root;
@@ -85,6 +137,20 @@ namespace ft
 			return (0);
 		}
 
+		iterator find (const key_type& k)
+		{
+			iterator it = begin();
+
+			while(it != end())
+			{
+				if(it->first == k)
+					return it;
+				it++;
+			}
+			return it;
+		}
+
+		// const_iterator find (const key_type& k) const;
 		size_type size() const
 		{
 			return _size;
@@ -104,6 +170,43 @@ namespace ft
 		{
 			return _al;
 		}
+		
+		Node *bound(Node *root, key_type k)
+        {
+            Node *current = root;
+            Node *parent = root;
+            while(current)
+            {
+                if(_kc(k, current->content->first))
+                {
+                    parent = current;
+                    current = current->left;
+                }
+                else if (_kc(current->content->first, k))
+                    current = current->right;
+                else
+                    return current;
+            }
+            return parent;
+        }
+
+		iterator lower_bound (const key_type& k)
+		{
+			return (iterator(bound(_root, k)));
+		}
+
+		//const_iterator lower_bound (const key_type& k) const;
+
+		// iterator upper_bound (const key_type& k)
+        // {
+        //     Node *n = bound(_Root, k);
+        //     iterator it = iterator(n, _Root);
+        //     if(it != end() && !kc(n->content->first,k) && !kc(k, n->content->first))
+        //         return(++it);
+        //     return(it);
+        // }
+	
+		//const_iterator upper_bound (const key_type& k) const;
 		
 		// A utility function to get the
 		// height of the tree
@@ -493,7 +596,25 @@ namespace ft
             erase(position->first);
         }
 
-		
+		void erase (iterator first, iterator last)
+        {
+            size_t i = 0;
+            ft::Vector<key_type> vec;
+            
+            if (first == last)
+                return ;
+            while (first != last)
+            {
+                vec.push_back(first.getNode()->content->first);
+                first++;
+            }
+            while (i < vec.size())
+            {
+                
+                erase(vec[i]);
+                i++;
+            }
+        }
 		// Helper function to print branches of the binary tree
 		void showTrunks(Trunk *p)
 		{
@@ -563,6 +684,3 @@ namespace ft
             key_compare _kc;
 	};
 }
-
-
-
