@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/28 02:30:58 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/25 23:25:32 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/26 19:10:55 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ namespace ft
         
         reverse_iterator() {}
 		
-        explicit reverse_iterator(iterator_type it) 
+        explicit reverse_iterator(iterator_type it)
 		{
-			_iter = it - 1;
+			--it;
+			_iter = it;
 		}
 		
         template <class Iter>

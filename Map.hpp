@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/25 23:22:24 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/26 19:25:29 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,29 @@ namespace ft
 			class Alloc = std::allocator<pair<const Key,T> >    // map::allocator_type
 			> class map
 	{
+		public:
 		typedef Key key_type;
 		typedef T mapped_type;
 		typedef ft::pair<key_type,mapped_type> value_type;
 		typedef Compare key_compare;
 		typedef Alloc allocator_type;
 		typedef size_t	size_type;
-	
-		public:
 		
+		class value_compare
+		{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
+			protected:
+			Compare comp;
+			public:
+			value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator() (const value_type& x, const value_type& y) const
+			{
+				return comp(x.first, y.first);
+			}
+		};
+
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 		{
 			_size = 0;
@@ -57,8 +71,8 @@ namespace ft
 		{
 			_size = 0;
 			_root = NULL;
-			iterator beg = x.begin();
-			iterator end = x.end();
+			const_iterator beg = x.begin();
+			const_iterator end = x.end();
 			while(beg != end)
 			{
 				insert(*beg);
@@ -76,8 +90,8 @@ namespace ft
 			if(_size != 0)
 				clear();
 			
-			iterator beg = x.begin();
-			iterator end = x.end();
+			const_iterator beg = x.begin();
+			const_iterator end = x.end();
 			while(beg != end)
 			{
 				insert(*beg);
@@ -107,7 +121,9 @@ namespace ft
 
 		typename Alloc::template rebind<Node>::other aloc;
 		Node *_root;
-		
+		Node *last_inserted;
+		Node *not_inserted;
+	
 		iterator begin()
 		{
 			return(iterator(minValueNode(_root), _root));
@@ -208,24 +224,69 @@ namespace ft
             return parent;
         }
 
+		Node *bound(Node *root, key_type k) const
+        {
+            Node *current = root;
+            Node *parent = root;
+
+            while(current)
+            {
+                if(_kc(k, current->content->first))
+                {
+                    parent = current;
+                    current = current->left;
+                }
+                else if (_kc(current->content->first, k))
+                    current = current->right;
+                else
+                    return current;
+            }
+            return parent;
+        }
+		
 		iterator lower_bound (const key_type& k)
 		{
 			return (iterator(bound(_root, k), _root));
 		}
 
-		//const_iterator lower_bound (const key_type& k) const;
+		const_iterator lower_bound (const key_type& k) const
+		{
+			return (const_iterator(bound(_root, k), _root));
+		}
 
-		// iterator upper_bound (const key_type& k)
-        // {
-        //     Node *n = bound(_root, k);
-        //     iterator it = iterator(n, _root);
-        //     if(it != end() && !kc(n->content->first,k) && !kc(k, n->content->first))
-        //         return(++it);
-        //     return(it);
-        // }
+		iterator upper_bound (const key_type& k)
+        {
+            Node *n = bound(_root, k);
+            iterator it = iterator(n, _root);
+            if(it != end() && !_kc(n->content->first,k) && !_kc(k, n->content->first))
+                return(++it);
+            return(it);
+        }
 	
-		//const_iterator upper_bound (const key_type& k) const;
+		const_iterator upper_bound (const key_type& k) const
+        {
+            Node *n = bound(_root, k);
+            iterator it = iterator(n, _root);
+            if(it != end() && !_kc(n->content->first,k) && !_kc(k, n->content->first))
+                return(++it);
+            return(it);
+        }
 		
+		pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+        {
+            return (ft::make_pair(lower_bound(k), upper_bound(k)));
+        }
+		
+        pair<iterator,iterator> equal_range (const key_type& k)
+        {
+            return (ft::make_pair(lower_bound(k), upper_bound(k)));
+        }
+	
+		value_compare value_comp() const
+        {
+            return (value_compare(_kc));
+        }
+
 		void swap (map& x)
         {
             std::swap(_size, x._size);
@@ -339,14 +400,14 @@ namespace ft
 			return height(N->left) - height(N->right);
 		}
 
-		void insert (const value_type& val)
+		pair<iterator,bool> insert (const value_type& val)
         {
-            //size_t s = _size;
+            size_t s = _size;
             _root = insert(_root, val, _root);
-            // if (s == _size)
-            //     return(ft::make_pair(iterator(not_inserted,_Root), false));
-            // else
-            //     return(ft::make_pair(iterator(last_insert,_Root), true));
+            if (s == _size)
+                return(ft::make_pair(iterator(not_inserted,_root), false));
+            else
+                return(ft::make_pair(iterator(last_inserted,_root), true));
         }
 
 		void insert (iterator position, const value_type& val)
@@ -365,10 +426,10 @@ namespace ft
             }
         }
 
-		// mapped_type& operator[] (const key_type& k)
-        // {
-        //     return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
-        // }
+		mapped_type& operator[] (const key_type& k)
+        {
+            return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
+        }
 		// Recursive function to insert a key
 		// in the subtree rooted with node and
 		// returns the new root of the subtree.
@@ -381,6 +442,7 @@ namespace ft
 				Node * n;
 				n = newNode(content, parent);
 				node = n;
+				last_inserted = n;
 				_size++;
 				return(node);
 			}
@@ -397,7 +459,10 @@ namespace ft
 			else if (_kc(node->content->first, content.first))
 				node->right = insert(node->right, content, node);
 			else // Equal keys are not allowed in BST
+			{
+				not_inserted = node;
 				return node;
+			}
 			// if(_kc(node->content->first, content.first))
 			// {
 			// 	if(node->right->content)
@@ -463,7 +528,29 @@ namespace ft
 			return current;
 		}
 		
+		Node * minValueNode(Node* node) const
+		{
+			Node* current = node;
+		
+			/* loop down to find the leftmost leaf */
+			while (current && current->left != NULL)
+				current = current->left;
+		
+			return current;
+		}
+		
 		Node * maxValueNode(Node* node)
+		{
+			Node* current = node;
+		
+			/* loop down to find the leftmost leaf */
+			while (current && current->right != NULL)
+				current = current->right;
+		
+			return current;
+		}
+
+		Node * maxValueNode(Node* node) const
 		{
 			Node* current = node;
 		
@@ -711,4 +798,51 @@ namespace ft
             allocator_type   _al;
             key_compare _kc;
 	};
+	//relational operators
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator== (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        if (lhs.size() != rhs.size())
+            return (lhs.size() == rhs.size());
+        return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator!= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        return(!(lhs == rhs));
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator<  (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+    }
+    
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator> (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        return(rhs < lhs);
+    }
+    
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator<= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        if (lhs < rhs || lhs == rhs)
+            return(true);
+        return (false);
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator>= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+    {
+        if (lhs > rhs || lhs == rhs)
+            return(true);
+        return (false);
+    }
+    template <class Key, class T, class Compare, class Alloc>
+    void swap (map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y)
+    {
+        x.swap(y);
+    }
 }
