@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/26 19:25:29 by smhah            ###   ########.fr       */
+/*   Updated: 2022/05/29 01:43:50 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,17 +170,24 @@ namespace ft
 			return (0);
 		}
 
-		iterator find (const key_type& k)
+		Node *search(Node *node, const key_type & k) const
 		{
-			iterator it = begin();
-
-			while(it != end())
+			if (node == NULL)
+                return NULL;
+            if(_kc(k, node->content->first))
 			{
-				if(it->first == k)
-					return it;
-				it++;
-			}
-			return it;
+                node = search(node->left, k);           
+            }
+			else if(_kc(node->content->first, k))
+			{
+                node = search(node->right, k);
+            }
+            return node;	
+		}
+		
+		iterator find (const key_type & k)
+		{
+			return (iterator(search(_root, k), _root));
 		}
 
 		// const_iterator find (const key_type& k) const;
@@ -724,8 +731,7 @@ namespace ft
                 first++;
             }
             while (i < vec.size())
-            {
-                
+            {           
                 erase(vec[i]);
                 i++;
             }
