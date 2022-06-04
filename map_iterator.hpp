@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 07:47:27 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/26 19:55:40 by smhah            ###   ########.fr       */
+/*   Updated: 2022/06/04 04:33:18 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,12 @@ namespace ft{
                 return (*this);
             }
             ~map_iter(){}
-            T* operator->() const{ return (_p->content);}
-            T& operator*() const{ return (*_p->content);}
+            T		&operator*() const {
+				return (_p->content);
+			}
+            T *			operator->() const {	return &operator*();	}
+            //T* operator->() const{ return (_p->content);}
+            //T& operator*() const{ return (_p->content);}
             
             map_iter& operator--()
             {

@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/05/29 01:43:50 by smhah            ###   ########.fr       */
+/*   Updated: 2022/06/04 04:27:04 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ namespace ft
 		// An AVL tree node
 		struct Node
 		{
-			value_type *content;
+			value_type content;
 			Node *left;
 			Node *right;
 			Node *parent;
@@ -160,9 +160,9 @@ namespace ft
 			Node *p = _root;
 			while(p != NULL)
 			{
-				if(_kc(p->content->first, k))
+				if(_kc(p->content.first, k))
 					p = p->right;
-				else if (_kc(k, p->content->first))
+				else if (_kc(k, p->content.first))
 					p = p->left;
 				else
 					return (1);
@@ -174,11 +174,11 @@ namespace ft
 		{
 			if (node == NULL)
                 return NULL;
-            if(_kc(k, node->content->first))
+            if(_kc(k, node->content.first))
 			{
                 node = search(node->left, k);           
             }
-			else if(_kc(node->content->first, k))
+			else if(_kc(node->content.first, k))
 			{
                 node = search(node->right, k);
             }
@@ -218,12 +218,12 @@ namespace ft
 
             while(current)
             {
-                if(_kc(k, current->content->first))
+                if(_kc(k, current->content.first))
                 {
                     parent = current;
                     current = current->left;
                 }
-                else if (_kc(current->content->first, k))
+                else if (_kc(current->content.first, k))
                     current = current->right;
                 else
                     return current;
@@ -238,12 +238,12 @@ namespace ft
 
             while(current)
             {
-                if(_kc(k, current->content->first))
+                if(_kc(k, current->content.first))
                 {
                     parent = current;
                     current = current->left;
                 }
-                else if (_kc(current->content->first, k))
+                else if (_kc(current->content.first, k))
                     current = current->right;
                 else
                     return current;
@@ -265,7 +265,7 @@ namespace ft
         {
             Node *n = bound(_root, k);
             iterator it = iterator(n, _root);
-            if(it != end() && !_kc(n->content->first,k) && !_kc(k, n->content->first))
+            if(it != end() && !_kc(n->content.first,k) && !_kc(k, n->content.first))
                 return(++it);
             return(it);
         }
@@ -274,7 +274,7 @@ namespace ft
         {
             Node *n = bound(_root, k);
             iterator it = iterator(n, _root);
-            if(it != end() && !_kc(n->content->first,k) && !_kc(k, n->content->first))
+            if(it != end() && !_kc(n->content.first,k) && !_kc(k, n->content.first))
                 return(++it);
             return(it);
         }
@@ -326,20 +326,20 @@ namespace ft
 			Node* node = new Node();
 			//Node* node = aloc.allocate(1);
 			//node->content = _al.allocate(1);
-			node->content = new value_type();
+			//node->content = new value_type();
 			// node->key = key;
 			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "&" for test
-			//node->content = content;
-			node->content->first = content.first;
-			node->content->second = content.second;
+			node->content = content;
+			node->content.first = content.first;
+			node->content.second = content.second;
 			node->left = NULL;
 			node->right = NULL;
 			node->parent = parent;
 			node->height = 1;				 // new node is initially
 							// added at leaf
-			// std::cout << "node inserted " << node->content->first << std::endl;
+			// std::cout << "node inserted " << node->content.first << std::endl;
 			// if(parent)
-			// 	std::cout << "parent of the node " << node->parent->content->first << std::endl;
+			// 	std::cout << "parent of the node " << node->parent->content.first << std::endl;
 			return(node);
 		}
 
@@ -383,7 +383,7 @@ namespace ft
 			y->left = x;
 			y->parent = x->parent;
 			x->parent = y;
-			//std::cout << "t2 content is " << T2->content->first << std::endl;
+			//std::cout << "t2 content is " << T2->content.first << std::endl;
 			if(T2)
 				T2->parent = x;
 			x->right = T2;
@@ -461,19 +461,19 @@ namespace ft
 			// else // Equal keys are not allowed in BST
 			// 	return node;
 			//if (content < node->content)
-			if(_kc(content.first, node->content->first))
+			if(_kc(content.first, node->content.first))
 				node->left = insert(node->left, content, node);
-			else if (_kc(node->content->first, content.first))
+			else if (_kc(node->content.first, content.first))
 				node->right = insert(node->right, content, node);
 			else // Equal keys are not allowed in BST
 			{
 				not_inserted = node;
 				return node;
 			}
-			// if(_kc(node->content->first, content.first))
+			// if(_kc(node->content.first, content.first))
 			// {
 			// 	if(node->right->content)
-			// 		std::cout << "check value content first " << node->right->content->first << std::endl;
+			// 		std::cout << "check value content first " << node->right->content.first << std::endl;
 			// }
 			/* 2. Update height of this ancestor node */
 			node->height = 1 + max(height(node->left),
@@ -489,24 +489,24 @@ namespace ft
 
 			// Left Left Case
 
-			if (balance > 1 && _kc(content.first, node->left->content->first))
+			if (balance > 1 && _kc(content.first, node->left->content.first))
 				return rightRotate(node);
 
 			// Right Right Case
 
-			if (balance < -1 && !(_kc(content.first, node->right->content->first)))
+			if (balance < -1 && !(_kc(content.first, node->right->content.first)))
 				return leftRotate(node);
 
 			// Left Right Case
 
-			if (balance > 1 && !(_kc(content.first, node->left->content->first)))
+			if (balance > 1 && !(_kc(content.first, node->left->content.first)))
 			{	
 				node->left = leftRotate(node->left);
 				return rightRotate(node);
 			}
 			// Right Left Case
 
-			if (balance < -1 && _kc(content.first, node->right->content->first))
+			if (balance < -1 && _kc(content.first, node->right->content.first))
 			{
 				node->right = rightRotate(node->right);
 				return leftRotate(node);
@@ -582,13 +582,13 @@ namespace ft
 			// If the key to be deleted is smaller
 			// than the root's key, then it lies
 			// in left subtree
-			if (_kc(content.first, root->content->first))
+			if (_kc(content.first, root->content.first))
 				root->left = deleteNode(root->left, content);
 		
 			// If the content to be deleted is greater
 			// than the root's content, then it lies
 			// in right subtree
-			else if((_kc(root->content->first, content.first)))
+			else if((_kc(root->content.first, content.first)))
 				root->right = deleteNode(root->right, content);
 		
 			// if content is same as root's content, then
@@ -638,7 +638,7 @@ namespace ft
 		
 					// Delete the inorder successor
 					root->right = deleteNode(root->right,
-											*temp->content);
+											temp->content);
 				}
 			}
 		
@@ -727,7 +727,7 @@ namespace ft
                 return ;
             while (first != last)
             {
-                vec.push_back(first.getNode()->content->first);
+                vec.push_back(first.getNode()->content.first);
                 first++;
             }
             while (i < vec.size())
@@ -773,7 +773,7 @@ namespace ft
 			}
 		
 			showTrunks(trunk);
-			std::cout << " " << root->content->first << std::endl;
+			std::cout << " " << root->content.first << std::endl;
 		
 			if (prev) {
 				prev->str = prev_str;
@@ -788,13 +788,13 @@ namespace ft
 		{
 			if(root != NULL)
 			{
-				std::cout <<"key is " << root->content->first << std::endl;
+				std::cout <<"key is " << root->content.first << std::endl;
 				if(root->left)
-					std::cout << "left child is " << root->left->content->first << std::endl;
+					std::cout << "left child is " << root->left->content.first << std::endl;
 				if (root->right)
-					std::cout << "right child is " << root->right->content->first << std::endl;
+					std::cout << "right child is " << root->right->content.first << std::endl;
 				if(root->parent)
-					std::cout <<"parent is " << root->parent->content->first <<std::endl;
+					std::cout <<"parent is " << root->parent->content.first <<std::endl;
 				preOrder(root->left);
 				preOrder(root->right);
 			}
