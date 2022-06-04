@@ -6,7 +6,7 @@
 /*   By: smhah <smhah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 22:44:26 by smhah             #+#    #+#             */
-/*   Updated: 2022/06/04 04:27:04 by smhah            ###   ########.fr       */
+/*   Updated: 2022/06/04 23:49:24 by smhah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ namespace ft
 		public:
 		typedef Key key_type;
 		typedef T mapped_type;
-		typedef ft::pair<key_type,mapped_type> value_type;
+		typedef ft::pair<const key_type,mapped_type> value_type;
 		typedef Compare key_compare;
 		typedef Alloc allocator_type;
 		typedef size_t	size_type;
 		
 		class value_compare
-		{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
+		{   // in C++98, it is required to inherit binary_function<m_value_type,m_value_type,bool>
 			protected:
 			Compare comp;
 			public:
@@ -100,9 +100,11 @@ namespace ft
 			return(*this);
 		}
 		// An AVL tree node
+		typedef ft::pair<key_type,mapped_type> m_value_type;
+
 		struct Node
 		{
-			value_type content;
+			m_value_type content;
 			Node *left;
 			Node *right;
 			Node *parent;
@@ -114,12 +116,13 @@ namespace ft
 			return (_root);
 		}
 		
-		typedef typename ft::map_iter<Node, value_type,Compare> iterator;
-		typedef typename ft::map_iter<Node, const value_type, Compare> const_iterator;
+		
+		typedef typename ft::map_iter<Node, m_value_type,Compare> iterator;
+		typedef typename ft::map_iter<Node, const m_value_type, Compare> const_iterator;
 		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
         typedef typename ft::reverse_iterator<iterator> reverse_iterator;
 
-		typename Alloc::template rebind<Node>::other aloc;
+		typedef typename Alloc::template rebind<Node>::other aloc;
 		Node *_root;
 		Node *last_inserted;
 		Node *not_inserted;
@@ -321,12 +324,12 @@ namespace ft
 		new node with the given key and
 		NULL left and right pointers. */
 		// template<class Key, class T>
-		Node* newNode(value_type content, Node* parent)
+		Node* newNode(m_value_type content, Node* parent)
 		{
-			Node* node = new Node();
-			//Node* node = aloc.allocate(1);
+			// Node* node = new Node();
+			Node* node = _aln.allocate(1);
 			//node->content = _al.allocate(1);
-			//node->content = new value_type();
+			//node->content = new m_value_type();
 			// node->key = key;
 			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "&" for test
 			node->content = content;
@@ -407,7 +410,7 @@ namespace ft
 			return height(N->left) - height(N->right);
 		}
 
-		pair<iterator,bool> insert (const value_type& val)
+		pair<iterator,bool> insert (const m_value_type& val)
         {
             size_t s = _size;
             _root = insert(_root, val, _root);
@@ -417,7 +420,7 @@ namespace ft
                 return(ft::make_pair(iterator(last_inserted,_root), true));
         }
 
-		void insert (iterator position, const value_type& val)
+		void insert (iterator position, const m_value_type& val)
         {
             (void) position;
             insert(val);
@@ -441,7 +444,7 @@ namespace ft
 		// in the subtree rooted with node and
 		// returns the new root of the subtree.
 		// template<class Key, class T>
-		Node* insert(Node* node, value_type content, Node* parent)
+		Node* insert(Node* node, m_value_type content, Node* parent)
 		{
 			/* 1. Perform the normal BST insertion */
 			if (node == NULL)
@@ -572,7 +575,7 @@ namespace ft
 		// given root. It returns root of the
 		// modified subtree.
 		// template<class Key, class T>
-		Node* deleteNode(Node* root, value_type & content)
+		Node* deleteNode(Node* root, m_value_type & content)
 		{
 			
 			// STEP 1: PERFORM STANDARD BST DELETE
@@ -621,7 +624,8 @@ namespace ft
 							//deleteNode(root->right, temp->content);
 					} // Copy the contents of
 								// the non-empty child
-					free(temp);
+					//free(temp);
+					_aln.deallocate(temp, 1);					
 					temp = NULL;
 					if(_size)
 						_size--;
@@ -704,7 +708,7 @@ namespace ft
         {
             size_type s = _size;
             //  printTree(_root, nullptr, false);
-			value_type content;
+			m_value_type content;
 			content = ft::make_pair(k, mapped_type());
             _root = deleteNode(_root, content);
             // printTree(_root, nullptr, false);
@@ -803,6 +807,7 @@ namespace ft
             size_t  _size;
             allocator_type   _al;
             key_compare _kc;
+			aloc	_aln;
 	};
 	//relational operators
     template <class Key, class T, class Compare, class Alloc>
